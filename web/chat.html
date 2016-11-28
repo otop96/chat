@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Socket Chat</title>
+</head>
+<style>
+    #tableDiv {
+        border: 1px solid black;
+        height: 400px;
+        width: 400px;
+        overflow-y: scroll;
+    }
+    .red {
+        color : red;
+    }
+    .black {
+        color : black;
+    }
+</style>
+<script
+        src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+        integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc="
+        crossorigin="anonymous"></script>
+<script>
+    var ws;
+
+    $(document).ready(function(){
+
+
+        $("#register").click(function() {
+            ws = new WebSocket("ws://localhost:8080/chat/"+$('#id').val());
+            $('#allConnected').append($('#id').val() + '\n');
+            ws.onmessage = function(evt)
+            {
+                var msg = evt.data;
+                if (msg.startsWith($('#id').val()+ " >>")) {
+                    $('#tableDiv').append("<p class='red'>" + msg + "</p>");
+                } else {
+                    $('#tableDiv').append("<p class='black'>" + msg + "</p>");
+                }
+                $('#tableDiv').animate({
+                    scrollTop: $("#tableDiv")[0].scrollHeight
+                }, 300);
+
+            };
+
+
+        });
+
+
+        $("#send").click(function() {
+            var txt = $('#message').val();
+            ws.send(txt+"dd");
+        });
+    });
+</script>
+<body>
+<form>
+    <input type="text" id="id" name="id" placeholder="Enter your id" /> <br>
+    <input type="button" id="register" value="Register" /> <br>
+    <textarea id="allConnected"  rows="10" cols="50" readonly >
+All connected users
+</textarea><br>
+    <div id='tableDiv'>
+
+    </div><br>
+    <input type="text" id="message" name="id" placeholder="Enter your message" /> <br>
+    <input type="button" id="send" value="Send" /> <br>
+</form>
+</body>
+</html>
